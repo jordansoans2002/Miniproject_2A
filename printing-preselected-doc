@@ -1,0 +1,38 @@
+package com.example.printingdocs;
+
+import javafx.scene.control.Dialog;
+
+import javax.print.*;
+import javax.print.attribute.*;
+import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.MediaSize;
+import javax.print.attribute.standard.MediaSizeName;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+
+public class PrintDoc{
+    public static void main(String []args){
+        try{
+            FileInputStream file=new FileInputStream("src/main/java/com/example/printingdocs/test.png");
+            DocFlavor df=DocFlavor.INPUT_STREAM.PNG;
+            Doc doc=new SimpleDoc(file,df,null);
+            PrintRequestAttributeSet aset=new HashPrintRequestAttributeSet();
+            aset.add(MediaSizeName.ISO_A4);
+            PrintService[] services= PrintServiceLookup.lookupPrintServices(df,aset);
+            for(PrintService s:services) {
+                System.out.println(s.getName());
+                DocPrintJob job=s.createPrintJob();
+                try{
+                    job.print(doc,aset);
+                }catch(PrintException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        }catch (FileNotFoundException e){
+            System.out.println(e.getMessage());
+        }
+    }
+}
